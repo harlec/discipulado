@@ -4,9 +4,14 @@
  */
 require_once __DIR__ . '/inc/auth.php';
 
-// Si ya está logueado, redirigir al dashboard
+// Si ya está logueado, redirigir según rol
 if (isLoggedIn()) {
-    redirect(SITE_URL . '/dashboard.php');
+    // Admin va al portal, otros al dashboard
+    if (hasRole([1])) {
+        redirect(SITE_URL . '/portal.php');
+    } else {
+        redirect(SITE_URL . '/dashboard.php');
+    }
 }
 
 $error = '';
@@ -21,7 +26,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } else {
         $result = login($email, $password);
         if ($result['success']) {
-            redirect(SITE_URL . '/dashboard.php');
+            // Admin va al portal, otros al dashboard
+            if (hasRole([1])) {
+                redirect(SITE_URL . '/portal.php');
+            } else {
+                redirect(SITE_URL . '/dashboard.php');
+            }
         } else {
             $error = $result['message'];
         }
