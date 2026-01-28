@@ -195,29 +195,31 @@ $user = getCurrentUser();
                 </div>
 
                 <!-- Las Tres Escuelas -->
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <a href="#" class="process-card card-school text-white rounded-xl p-5 text-center shadow-lg">
-                        <svg class="w-8 h-8 mx-auto mb-2 opacity-90" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path>
-                        </svg>
-                        <h3 class="font-semibold">Escuela Dominical</h3>
-                    </a>
-                    <a href="#" class="process-card card-school text-white rounded-xl p-5 text-center shadow-lg">
-                        <svg class="w-8 h-8 mx-auto mb-2 opacity-90" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 21v-4m0 0V5a2 2 0 012-2h6.5l1 1H21l-3 6 3 6h-8.5l-1-1H5a2 2 0 00-2 2zm9-13.5V9"></path>
-                        </svg>
-                        <h3 class="font-semibold">Escuela Castillo del Rey</h3>
-                    </a>
-                    <a href="<?= SITE_URL ?>/dashboard.php" class="process-card card-school text-white rounded-xl p-5 text-center shadow-lg relative overflow-hidden">
-                        <div class="absolute top-2 right-2 bg-white/20 px-2 py-0.5 rounded text-xs">
-                            Activo
-                        </div>
-                        <svg class="w-8 h-8 mx-auto mb-2 opacity-90" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
-                        </svg>
-                        <h3 class="font-semibold">Escuela de Discipulado</h3>
-                        <p class="text-sm opacity-90">y Liderazgo</p>
-                    </a>
+                <div class="max-w-2xl mx-auto">
+                    <div class="grid grid-cols-3 gap-3">
+                        <a href="#" class="process-card card-school text-white rounded-lg p-3 text-center shadow-md">
+                            <svg class="w-6 h-6 mx-auto mb-1 opacity-90" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path>
+                            </svg>
+                            <h3 class="font-medium text-sm">Escuela Dominical</h3>
+                        </a>
+                        <a href="#" class="process-card card-school text-white rounded-lg p-3 text-center shadow-md">
+                            <svg class="w-6 h-6 mx-auto mb-1 opacity-90" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 21v-4m0 0V5a2 2 0 012-2h6.5l1 1H21l-3 6 3 6h-8.5l-1-1H5a2 2 0 00-2 2zm9-13.5V9"></path>
+                            </svg>
+                            <h3 class="font-medium text-sm">Escuela Castillo del Rey</h3>
+                        </a>
+                        <a href="<?= SITE_URL ?>/dashboard.php" class="process-card card-school text-white rounded-lg p-3 text-center shadow-md relative overflow-hidden">
+                            <div class="absolute top-1 right-1 bg-white/20 px-1.5 py-0.5 rounded text-xs">
+                                Activo
+                            </div>
+                            <svg class="w-6 h-6 mx-auto mb-1 opacity-90" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                            </svg>
+                            <h3 class="font-medium text-sm">Escuela de Discipulado</h3>
+                            <p class="text-xs opacity-90">y Liderazgo</p>
+                        </a>
+                    </div>
                 </div>
             </div>
 
