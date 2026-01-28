@@ -93,7 +93,7 @@ include TEMPLATES_PATH . '/sidebar.php';
                     <select name="estado" class="px-4 py-2 border border-gray-300 rounded-lg" onchange="this.form.submit()">
                         <option value="">Todos los estados</option>
                         <?php foreach ($ESTADOS_INSCRIPCION as $key => $val): ?>
-                        <option value="<?= $key ?>" <?= $estado == $key ? 'selected' : '' ?>><?= e($val) ?></option>
+                        <option value="<?= $key ?>" <?= $estadoFiltro == $key ? 'selected' : '' ?>><?= e($val) ?></option>
                         <?php endforeach; ?>
                     </select>
                 </form>
