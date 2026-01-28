@@ -8,7 +8,7 @@ date_default_timezone_set('America/Lima');
 
 // Configuración del sitio
 define('SITE_NAME', 'Escuela de Discipulado y Liderazgo');
-define('SITE_URL', 'http://localhost/discipulado');
+define('SITE_URL', 'https://discipulado.harlec.com.pe');
 
 // Rutas
 define('BASE_PATH', dirname(__DIR__));

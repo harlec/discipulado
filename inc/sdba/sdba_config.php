@@ -2,9 +2,9 @@
 
 class Sdba_config
 {
-    public static $dbname = 'discipulado_db'; // Your database name
-    public static $dbuser = 'root'; // Your database username
-    public static $dbpass = ''; // Your database password
+    public static $dbname = 'admin_discipulado'; // Your database name
+    public static $dbuser = 'admin_discipulado'; // Your database username
+    public static $dbpass = 'ikm169uhn'; // Your database password
     public static $dbhost = 'localhost'; // Your database host, 'localhost' is default.
     public static $dbencoding = 'utf8mb4'; // Your database encoding
     
