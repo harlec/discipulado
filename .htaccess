@@ -1,13 +1,11 @@
 # Habilitar mod_rewrite
 RewriteEngine On
+RewriteBase /
 
-# Redireccionar a HTTPS
-RewriteCond %{HTTPS} off
-RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+# Página por defecto
+DirectoryIndex index.php
 
-# Si el archivo o directorio no existe, cargar index.php
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteCond %{REQUEST_FILENAME} !-d
+# Redireccionar raíz a index.php
 RewriteRule ^$ index.php [L]
 
 # Configuración de PHP
