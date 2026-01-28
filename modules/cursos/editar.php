@@ -29,24 +29,51 @@ $error = '';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $datos = [
         'nivel_id' => intval($_POST['nivel_id'] ?? 0),
-        'modulo' => $_POST['modulo'] ?: null,
         'ciclo' => $_POST['ciclo'] ?? getCicloActual(),
-        'maestro_id' => $_POST['maestro_id'] ?: null,
         'dia_clase' => $_POST['dia_clase'] ?? '',
-        'hora_inicio' => $_POST['hora_inicio'] ?: null,
-        'hora_fin' => $_POST['hora_fin'] ?: null,
         'dia_oracion' => $_POST['dia_oracion'] ?? '',
-        'fecha_inicio' => $_POST['fecha_inicio'] ?: null,
-        'fecha_fin' => $_POST['fecha_fin'] ?: null,
+        'hora_inicio' => $_POST['hora_inicio'] ?: '20:00',
+        'hora_fin' => $_POST['hora_fin'] ?: '22:00',
         'horas_cronologicas' => intval($_POST['horas_cronologicas'] ?? 24),
         'semanas' => intval($_POST['semanas'] ?? 12),
         'activo' => isset($_POST['activo']) ? 1 : 0,
     ];
 
+    // Campos opcionales - solo incluir si tienen valor
+    if (!empty($_POST['modulo'])) {
+        $datos['modulo'] = intval($_POST['modulo']);
+    }
+
+    if (!empty($_POST['maestro_id'])) {
+        $datos['maestro_id'] = intval($_POST['maestro_id']);
+    }
+
+    if (!empty($_POST['fecha_inicio'])) {
+        $datos['fecha_inicio'] = $_POST['fecha_inicio'];
+    }
+
+    if (!empty($_POST['fecha_fin'])) {
+        $datos['fecha_fin'] = $_POST['fecha_fin'];
+    }
+
     if (!$datos['nivel_id']) {
         $error = 'Debe seleccionar un nivel';
     } else {
+        // Primero actualizar los datos normales
         $result = Sdba::table('cursos')->where('id', $id)->update($datos);
+
+        // Luego, actualizar campos que deben ser NULL con query directa
+        $nullFields = [];
+        if (empty($_POST['modulo'])) $nullFields[] = "modulo = NULL";
+        if (empty($_POST['maestro_id'])) $nullFields[] = "maestro_id = NULL";
+        if (empty($_POST['fecha_inicio'])) $nullFields[] = "fecha_inicio = NULL";
+        if (empty($_POST['fecha_fin'])) $nullFields[] = "fecha_fin = NULL";
+
+        if (!empty($nullFields)) {
+            $nullSql = "UPDATE cursos SET " . implode(", ", $nullFields) . " WHERE id = " . intval($id);
+            Sdba::query($nullSql);
+        }
+
         if ($result !== false) {
             setFlashMessage('success', 'Curso actualizado exitosamente');
             redirect('ver.php?id=' . $id);
