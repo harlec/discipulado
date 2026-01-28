@@ -14,50 +14,34 @@ $id = intval($_GET['id'] ?? 0);
 $curso = Sdba::table('cursos')->where('id', $id)->get_one();
 
 if (!$curso) {
-    <?php
-    /**
-     * Ver Curso
-     */
-    error_reporting(E_ALL);
-    ini_set('display_errors', 1);
+    setFlashMessage('error', 'Curso no encontrado');
+    redirect(SITE_URL . '/modules/cursos/index.php');
+}
 
-    require_once __DIR__ . '/../../inc/config.php';
-    requireRole([1, 2]);
+// Obtener nivel
+$nivel = Sdba::table('niveles')->where('id', $curso['nivel_id'])->get_one();
+$curso['nombre'] = $nivel['nombre'] ?? 'Sin nivel';
 
-    $id = intval($_GET['id'] ?? 0);
+// Obtener maestro
+$maestro = null;
+if ($curso['maestro_id']) {
+    $maestro = Sdba::table('miembros')->where('id', $curso['maestro_id'])->get_one();
+}
 
-    // Obtener curso de forma simple
-    $curso = Sdba::table('cursos')->where('id', $id)->get_one();
+$pageTitle = $curso['nombre'] . ($curso['modulo'] ? ' - Módulo ' . $curso['modulo'] : '');
+$pageSubtitle = getNombreCiclo($curso['ciclo']);
 
-    if (!$curso) {
-        setFlashMessage('error', 'Curso no encontrado');
-        redirect(SITE_URL . '/modules/cursos/index.php');
-    }
+// Obtener inscritos de forma simple
+$inscritos = Sdba::table('inscripciones')
+    ->where('curso_id', $id)
+    ->get();
 
-    // Obtener nivel
-    $nivel = Sdba::table('niveles')->where('id', $curso['nivel_id'])->get_one();
-    $curso['nombre'] = $nivel['nombre'] ?? 'Sin nivel';
-
-    // Obtener maestro
-    $maestro = null;
-    if ($curso['maestro_id']) {
-        $maestro = Sdba::table('miembros')->where('id', $curso['maestro_id'])->get_one();
-    }
-
-    $pageTitle = $curso['nombre'] . ($curso['modulo'] ? ' - Módulo ' . $curso['modulo'] : '');
-    $pageSubtitle = getNombreCiclo($curso['ciclo']);
-
-    // Obtener inscritos de forma simple
-    $inscritos = Sdba::table('inscripciones')
-        ->where('curso_id', $id)
-        ->get();
-
-    // Agregar datos del miembro a cada inscripción
-    foreach ($inscritos as &$ins) {
-        $miembro = Sdba::table('miembros')->where('id', $ins['miembro_id'])->get_one();
-        $ins['apellidos'] = $miembro['apellidos'] ?? '';
-        $ins['nombres'] = $miembro['nombres'] ?? '';
-        $ins['celular'] = $miembro['celular'] ?? '';
+// Agregar datos del miembro a cada inscripción
+foreach ($inscritos as &$ins) {
+    $miembro = Sdba::table('miembros')->where('id', $ins['miembro_id'])->get_one();
+    $ins['apellidos'] = $miembro['apellidos'] ?? '';
+    $ins['nombres'] = $miembro['nombres'] ?? '';
+    $ins['celular'] = $miembro['celular'] ?? '';
     }
 
     // Obtener clases
