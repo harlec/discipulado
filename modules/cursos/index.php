@@ -2,6 +2,9 @@
 /**
  * Lista de Cursos
  */
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
 require_once __DIR__ . '/../../inc/config.php';
 requireRole([1, 2]);
 
@@ -10,37 +13,63 @@ $pageSubtitle = 'Gestión de cursos de la escuela';
 
 // Filtros
 $ciclo = $_GET['ciclo'] ?? getCicloActual();
-$nivel = $_GET['nivel'] ?? '';
+$nivelFiltro = $_GET['nivel'] ?? '';
 
-// Query
-$query = Sdba::table('cursos')
-    ->left_join('nivel_id', 'niveles', 'id')
-    ->left_join('maestro_id', 'miembros', 'id')
-    ->fields('id,modulo,ciclo,dia_clase,hora_inicio,hora_fin,fecha_inicio,fecha_fin,activo', false, 'cursos')
-    ->fields('nombre,orden', false, 'niveles')
-    ->fields('nombres,apellidos', false, 'miembros')
-    ->alias('nombre', 'nivel_nombre', 'niveles');
+// Query simple sin JOINs
+$query = Sdba::table('cursos');
 
 if ($ciclo) {
-    $query->where('ciclo', $ciclo, 'cursos');
+    $query->where('ciclo', $ciclo);
 }
 
-if ($nivel) {
-    $query->where('nivel_id', $nivel, 'cursos');
+if ($nivelFiltro) {
+    $query->where('nivel_id', $nivelFiltro);
 }
 
 // Si es maestro, solo ver sus cursos
 if (hasRole([2]) && !hasRole([1])) {
-    $query->where('maestro_id', $_SESSION['user_id'], 'cursos');
+    $query->where('maestro_id', $_SESSION['user_id']);
 }
 
-$query->order_by('orden', 'asc', 'niveles');
-$query->order_by('modulo', 'asc', 'cursos');
+$query->order_by('nivel_id', 'asc');
+$query->order_by('modulo', 'asc');
 
-$cursos = $query->get();
+$cursosRaw = $query->get();
+
+// Agregar datos relacionados a cada curso
+$cursos = [];
+foreach ($cursosRaw as $curso) {
+    // Obtener nivel
+    $nivel = Sdba::table('niveles')->where('id', $curso['nivel_id'])->get_one();
+    $curso['nivel_nombre'] = $nivel['nombre'] ?? 'Sin nivel';
+    $curso['orden'] = $nivel['orden'] ?? 0;
+
+    // Obtener maestro
+    if ($curso['maestro_id']) {
+        $maestro = Sdba::table('miembros')->where('id', $curso['maestro_id'])->get_one();
+        $curso['nombres'] = $maestro['nombres'] ?? '';
+        $curso['apellidos'] = $maestro['apellidos'] ?? '';
+    } else {
+        $curso['nombres'] = '';
+        $curso['apellidos'] = '';
+    }
+
+    $cursos[] = $curso;
+}
+
+// Ordenar por nivel
+usort($cursos, function($a, $b) {
+    if ($a['orden'] != $b['orden']) {
+        return $a['orden'] - $b['orden'];
+    }
+    return ($a['modulo'] ?? 0) - ($b['modulo'] ?? 0);
+});
 
 // Obtener ciclos disponibles
-$ciclosDisponibles = Sdba::table('cursos')->fields('ciclo')->group_by('ciclo')->order_by('ciclo', 'desc')->get_list('ciclo');
+$ciclosRaw = Sdba::table('cursos')->fields('ciclo')->get();
+$ciclosDisponibles = array_unique(array_column($ciclosRaw, 'ciclo'));
+rsort($ciclosDisponibles);
+
 $niveles = getNiveles();
 
 include TEMPLATES_PATH . '/header.php';

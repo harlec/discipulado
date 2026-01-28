@@ -2,6 +2,9 @@
 /**
  * Registro de Calificaciones
  */
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
 require_once __DIR__ . '/../../inc/config.php';
 requireRole([1, 2]);
 
@@ -10,20 +13,32 @@ $pageSubtitle = 'Registro de notas y evaluaciones';
 
 $curso_id = $_GET['curso_id'] ?? '';
 
-// Obtener cursos
-$queryCursos = Sdba::table('cursos')
-    ->left_join('nivel_id', 'niveles', 'id')
-    ->where('activo', 1, 'cursos')
-    ->fields('id,ciclo,modulo', false, 'cursos')
-    ->fields('nombre', false, 'niveles')
-    ->order_by('ciclo', 'desc', 'cursos')
-    ->order_by('orden', 'asc', 'niveles');
+// Obtener cursos - SIN JOINs
+$queryCursos = Sdba::table('cursos')->where('activo', 1);
 
 if (hasRole([2]) && !hasRole([1])) {
-    $queryCursos->where('maestro_id', $_SESSION['user_id'], 'cursos');
+    $queryCursos->where('maestro_id', $_SESSION['user_id']);
 }
 
-$cursos = $queryCursos->get();
+$queryCursos->order_by('ciclo', 'desc');
+$cursosRaw = $queryCursos->get();
+
+// Agregar datos de nivel a cada curso
+$cursos = [];
+foreach ($cursosRaw as $curso) {
+    $nivel = Sdba::table('niveles')->where('id', $curso['nivel_id'])->get_one();
+    $curso['nombre'] = $nivel['nombre'] ?? 'Sin nivel';
+    $curso['orden'] = $nivel['orden'] ?? 0;
+    $cursos[] = $curso;
+}
+
+// Ordenar por ciclo desc y orden asc
+usort($cursos, function($a, $b) {
+    if ($a['ciclo'] != $b['ciclo']) {
+        return $b['ciclo'] - $a['ciclo'];
+    }
+    return $a['orden'] - $b['orden'];
+});
 
 // Obtener tipos de calificaciones
 $tipos = Sdba::table('tipo_calificaciones')->get();
@@ -31,27 +46,39 @@ $tipos = Sdba::table('tipo_calificaciones')->get();
 // Si hay curso seleccionado
 $inscritos = [];
 if ($curso_id) {
-    $inscritos = Sdba::table('inscripciones')
-        ->left_join('miembro_id', 'miembros', 'id')
-        ->where('curso_id', $curso_id, 'inscripciones')
-        ->where_in('estado', ['inscrito', 'cursando'], 'inscripciones')
-        ->fields('id,nota_final', false, 'inscripciones')
-        ->fields('id,apellidos,nombres', false, 'miembros')
-        ->alias('id', 'inscripcion_id', 'inscripciones')
-        ->order_by('apellidos', 'asc', 'miembros')
+    // Obtener inscripciones SIN JOINs
+    $inscripcionesRaw = Sdba::table('inscripciones')
+        ->where('curso_id', $curso_id)
         ->get();
 
-    // Obtener calificaciones por tipo para cada inscrito
-    foreach ($inscritos as &$ins) {
+    // Filtrar por estado y agregar datos del miembro
+    foreach ($inscripcionesRaw as $ins) {
+        if (!in_array($ins['estado'], ['inscrito', 'cursando'])) {
+            continue;
+        }
+
+        $miembro = Sdba::table('miembros')->where('id', $ins['miembro_id'])->get_one();
+        $ins['inscripcion_id'] = $ins['id'];
+        $ins['apellidos'] = $miembro['apellidos'] ?? '';
+        $ins['nombres'] = $miembro['nombres'] ?? '';
+
+        // Obtener calificaciones por tipo
         $ins['notas'] = [];
         foreach ($tipos as $tipo) {
             $nota = Sdba::table('calificaciones')
-                ->where('inscripcion_id', $ins['inscripcion_id'])
+                ->where('inscripcion_id', $ins['id'])
                 ->where('tipo_id', $tipo['id'])
                 ->get_single('nota');
             $ins['notas'][$tipo['id']] = $nota;
         }
+
+        $inscritos[] = $ins;
     }
+
+    // Ordenar por apellidos
+    usort($inscritos, function($a, $b) {
+        return strcasecmp($a['apellidos'], $b['apellidos']);
+    });
 }
 
 // Procesar guardado

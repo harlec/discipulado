@@ -2,6 +2,9 @@
 /**
  * Lista de Inscripciones
  */
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
 require_once __DIR__ . '/../../inc/config.php';
 requireLogin();
 
@@ -10,42 +13,62 @@ $pageSubtitle = 'Gestión de inscripciones a cursos';
 
 // Filtros
 $ciclo = $_GET['ciclo'] ?? getCicloActual();
-$estado = $_GET['estado'] ?? '';
+$estadoFiltro = $_GET['estado'] ?? '';
 
-// Query base
-$query = Sdba::table('inscripciones')
-    ->left_join('miembro_id', 'miembros', 'id')
-    ->left_join('curso_id', 'cursos', 'id')
-    ->left_join('nivel_id', 'niveles', 'id', 'cursos')
-    ->fields('id,estado,nota_final,fecha_inscripcion', false, 'inscripciones')
-    ->fields('id,apellidos,nombres', false, 'miembros')
-    ->fields('ciclo,modulo', false, 'cursos')
-    ->fields('nombre', false, 'niveles')
-    ->alias('id', 'miembro_id', 'miembros');
+// Query simple sin JOINs
+$query = Sdba::table('inscripciones');
 
 // Filtros según rol
 if (hasRole([4])) {
     // Alumno solo ve sus inscripciones
-    $query->where('miembro_id', $_SESSION['user_id'], 'inscripciones');
-} elseif (hasRole([2]) && !hasRole([1])) {
-    // Maestro solo ve inscripciones de sus cursos
-    $query->where('maestro_id', $_SESSION['user_id'], 'cursos');
+    $query->where('miembro_id', $_SESSION['user_id']);
 }
 
-if ($ciclo) {
-    $query->where('ciclo', $ciclo, 'cursos');
+if ($estadoFiltro) {
+    $query->where('estado', $estadoFiltro);
 }
 
-if ($estado) {
-    $query->where('estado', $estado, 'inscripciones');
+$query->order_by('fecha_inscripcion', 'desc');
+
+$inscripcionesRaw = $query->get();
+
+// Agregar datos relacionados y filtrar por ciclo
+$inscripciones = [];
+foreach ($inscripcionesRaw as $ins) {
+    // Obtener curso
+    $curso = Sdba::table('cursos')->where('id', $ins['curso_id'])->get_one();
+
+    // Filtrar por ciclo si está definido
+    if ($ciclo && $curso['ciclo'] != $ciclo) {
+        continue;
+    }
+
+    // Si es maestro, filtrar por sus cursos
+    if (hasRole([2]) && !hasRole([1])) {
+        if ($curso['maestro_id'] != $_SESSION['user_id']) {
+            continue;
+        }
+    }
+
+    $ins['ciclo'] = $curso['ciclo'] ?? '';
+    $ins['modulo'] = $curso['modulo'] ?? '';
+
+    // Obtener nivel
+    $nivel = Sdba::table('niveles')->where('id', $curso['nivel_id'])->get_one();
+    $ins['nombre'] = $nivel['nombre'] ?? 'Sin nivel';
+
+    // Obtener miembro
+    $miembro = Sdba::table('miembros')->where('id', $ins['miembro_id'])->get_one();
+    $ins['apellidos'] = $miembro['apellidos'] ?? '';
+    $ins['nombres'] = $miembro['nombres'] ?? '';
+
+    $inscripciones[] = $ins;
 }
-
-$query->order_by('fecha_inscripcion', 'desc', 'inscripciones');
-
-$inscripciones = $query->get();
 
 // Ciclos disponibles
-$ciclosDisponibles = Sdba::table('cursos')->fields('ciclo')->group_by('ciclo')->order_by('ciclo', 'desc')->get_list('ciclo');
+$ciclosRaw = Sdba::table('cursos')->fields('ciclo')->get();
+$ciclosDisponibles = array_unique(array_column($ciclosRaw, 'ciclo'));
+rsort($ciclosDisponibles);
 
 global $ESTADOS_INSCRIPCION;
 

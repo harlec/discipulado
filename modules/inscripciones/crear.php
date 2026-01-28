@@ -2,6 +2,9 @@
 /**
  * Crear Inscripción
  */
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
 require_once __DIR__ . '/../../inc/config.php';
 requireRole([1]);
 
@@ -50,15 +53,28 @@ $miembros = Sdba::table('miembros')
     ->fields('id,apellidos,nombres')
     ->get();
 
-// Obtener cursos activos
-$cursos = Sdba::table('cursos')
-    ->left_join('nivel_id', 'niveles', 'id')
-    ->where('activo', 1, 'cursos')
-    ->order_by('ciclo', 'desc', 'cursos')
-    ->order_by('orden', 'asc', 'niveles')
-    ->fields('id,ciclo,modulo', false, 'cursos')
-    ->fields('nombre', false, 'niveles')
+// Obtener cursos activos (sin JOINs)
+$cursosRaw = Sdba::table('cursos')
+    ->where('activo', 1)
+    ->order_by('ciclo', 'desc')
     ->get();
+
+// Agregar datos de nivel a cada curso
+$cursos = [];
+foreach ($cursosRaw as $curso) {
+    $nivel = Sdba::table('niveles')->where('id', $curso['nivel_id'])->get_one();
+    $curso['nombre'] = $nivel['nombre'] ?? 'Sin nivel';
+    $curso['orden'] = $nivel['orden'] ?? 0;
+    $cursos[] = $curso;
+}
+
+// Ordenar por ciclo y orden de nivel
+usort($cursos, function($a, $b) {
+    if ($a['ciclo'] != $b['ciclo']) {
+        return $b['ciclo'] - $a['ciclo']; // desc
+    }
+    return $a['orden'] - $b['orden']; // asc
+});
 
 global $ESTADOS_INSCRIPCION;
 

@@ -2,6 +2,9 @@
 /**
  * Ver Miembro
  */
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
 require_once __DIR__ . '/../../inc/config.php';
 requireRole([1, 2, 3, 4]);
 
@@ -12,9 +15,9 @@ if (hasRole([4]) && $id != $_SESSION['user_id']) {
     redirect('ver.php?id=' . $_SESSION['user_id']);
 }
 
+// Obtener miembro simple sin JOIN
 $miembro = Sdba::table('miembros')
-    ->left_join('lider_id', 'miembros', 'id', 'miembros', 'lider')
-    ->where('id', $id, 'miembros')
+    ->where('id', $id)
     ->get_one();
 
 if (!$miembro) {
@@ -25,16 +28,27 @@ if (!$miembro) {
 $pageTitle = $miembro['apellidos'] . ', ' . $miembro['nombres'];
 $pageSubtitle = 'Ficha del miembro';
 
-// Obtener historial de cursos
-$historial = Sdba::table('inscripciones')
-    ->left_join('curso_id', 'cursos', 'id')
-    ->left_join('nivel_id', 'niveles', 'id', 'cursos')
-    ->where('miembro_id', $id, 'inscripciones')
-    ->order_by('fecha_inscripcion', 'desc', 'inscripciones')
-    ->fields('id,estado,nota_final,porcentaje_asistencia,fecha_inscripcion', false, 'inscripciones')
-    ->fields('ciclo,modulo', false, 'cursos')
-    ->fields('nombre,orden', false, 'niveles')
+// Obtener historial de cursos (sin JOINs)
+$inscripcionesRaw = Sdba::table('inscripciones')
+    ->where('miembro_id', $id)
+    ->order_by('fecha_inscripcion', 'desc')
     ->get();
+
+// Agregar datos relacionados al historial
+$historial = [];
+foreach ($inscripcionesRaw as $ins) {
+    // Obtener curso
+    $curso = Sdba::table('cursos')->where('id', $ins['curso_id'])->get_one();
+    $ins['ciclo'] = $curso['ciclo'] ?? '';
+    $ins['modulo'] = $curso['modulo'] ?? '';
+
+    // Obtener nivel
+    $nivel = Sdba::table('niveles')->where('id', $curso['nivel_id'])->get_one();
+    $ins['nombre'] = $nivel['nombre'] ?? 'Sin nivel';
+    $ins['orden'] = $nivel['orden'] ?? 0;
+
+    $historial[] = $ins;
+}
 
 // Obtener líder
 $lider = null;

@@ -2,20 +2,25 @@
 /**
  * Gestión de Clases del Curso
  */
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
 require_once __DIR__ . '/../../inc/config.php';
 requireRole([1]);
 
 $curso_id = intval($_GET['curso_id'] ?? 0);
 
-$curso = Sdba::table('cursos')
-    ->left_join('nivel_id', 'niveles', 'id')
-    ->where('id', $curso_id, 'cursos')
-    ->get_one();
+// Obtener curso SIN JOINs
+$curso = Sdba::table('cursos')->where('id', $curso_id)->get_one();
 
 if (!$curso) {
     setFlashMessage('error', 'Curso no encontrado');
     redirect('index.php');
 }
+
+// Obtener nivel
+$nivel = Sdba::table('niveles')->where('id', $curso['nivel_id'])->get_one();
+$curso['nombre'] = $nivel['nombre'] ?? 'Sin nivel';
 
 $pageTitle = 'Gestionar Clases';
 $pageSubtitle = $curso['nombre'] . ($curso['modulo'] ? ' - M' . $curso['modulo'] : '');

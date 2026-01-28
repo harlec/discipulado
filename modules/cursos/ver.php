@@ -2,37 +2,47 @@
 /**
  * Ver Curso
  */
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
 require_once __DIR__ . '/../../inc/config.php';
 requireRole([1, 2]);
 
 $id = intval($_GET['id'] ?? 0);
 
-$curso = Sdba::table('cursos')
-    ->left_join('nivel_id', 'niveles', 'id')
-    ->left_join('maestro_id', 'miembros', 'id')
-    ->where('id', $id, 'cursos')
-    ->fields('id,modulo,ciclo,dia_clase,hora_inicio,hora_fin,dia_oracion,fecha_inicio,fecha_fin,horas_cronologicas,semanas,activo', false, 'cursos')
-    ->fields('nombre', false, 'niveles')
-    ->fields('nombres,apellidos', false, 'miembros')
-    ->get_one();
+// Obtener curso de forma simple
+$curso = Sdba::table('cursos')->where('id', $id)->get_one();
 
 if (!$curso) {
     setFlashMessage('error', 'Curso no encontrado');
     redirect('index.php');
 }
 
+// Obtener nivel
+$nivel = Sdba::table('niveles')->where('id', $curso['nivel_id'])->get_one();
+$curso['nombre'] = $nivel['nombre'] ?? 'Sin nivel';
+
+// Obtener maestro
+$maestro = null;
+if ($curso['maestro_id']) {
+    $maestro = Sdba::table('miembros')->where('id', $curso['maestro_id'])->get_one();
+}
+
 $pageTitle = $curso['nombre'] . ($curso['modulo'] ? ' - Módulo ' . $curso['modulo'] : '');
 $pageSubtitle = getNombreCiclo($curso['ciclo']);
 
-// Obtener inscritos
+// Obtener inscritos de forma simple
 $inscritos = Sdba::table('inscripciones')
-    ->left_join('miembro_id', 'miembros', 'id')
-    ->where('curso_id', $id, 'inscripciones')
-    ->fields('id,estado,nota_final,porcentaje_asistencia', false, 'inscripciones')
-    ->fields('id,apellidos,nombres,celular', false, 'miembros')
-    ->alias('id', 'miembro_id', 'miembros')
-    ->order_by('apellidos', 'asc', 'miembros')
+    ->where('curso_id', $id)
     ->get();
+
+// Agregar datos del miembro a cada inscripción
+foreach ($inscritos as &$ins) {
+    $miembro = Sdba::table('miembros')->where('id', $ins['miembro_id'])->get_one();
+    $ins['apellidos'] = $miembro['apellidos'] ?? '';
+    $ins['nombres'] = $miembro['nombres'] ?? '';
+    $ins['celular'] = $miembro['celular'] ?? '';
+}
 
 // Obtener clases
 $clases = Sdba::table('clases')
@@ -76,7 +86,7 @@ include TEMPLATES_PATH . '/sidebar.php';
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
                     <div class="bg-gray-50 p-4 rounded-lg">
                         <p class="text-sm text-gray-500">Maestro</p>
-                        <p class="font-medium"><?= e($curso['nombres'] . ' ' . $curso['apellidos']) ?: 'Sin asignar' ?></p>
+                        <p class="font-medium"><?= $maestro ? e($maestro['nombres'] . ' ' . $maestro['apellidos']) : 'Sin asignar' ?></p>
                     </div>
                     <div class="bg-gray-50 p-4 rounded-lg">
                         <p class="text-sm text-gray-500">Horario</p>
