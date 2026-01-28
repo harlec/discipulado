@@ -135,48 +135,48 @@ $user = getCurrentUser();
                 </div>
 
                 <!-- Flujo de Procesos -->
-                <div class="flex flex-wrap justify-center items-center gap-3 mb-6">
-                    <a href="#" class="process-card card-operative text-white rounded-xl px-5 py-4 text-center shadow-lg">
-                        <span class="font-semibold text-base">Admisión</span>
+                <div class="flex justify-center items-center gap-2 mb-6 overflow-x-auto pb-2">
+                    <a href="#" class="process-card card-operative text-white rounded-lg px-4 py-3 text-center shadow-lg flex-shrink-0">
+                        <span class="font-semibold">Admisión</span>
                     </a>
-                    <svg class="w-6 h-6 flow-arrow flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg class="w-5 h-5 flow-arrow flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
                     </svg>
-                    <a href="#" class="process-card card-operative text-white rounded-xl px-5 py-4 text-center shadow-lg">
-                        <span class="font-semibold text-base">Matrícula</span>
+                    <a href="#" class="process-card card-operative text-white rounded-lg px-4 py-3 text-center shadow-lg flex-shrink-0">
+                        <span class="font-semibold">Matrícula</span>
                     </a>
-                    <svg class="w-6 h-6 flow-arrow flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg class="w-5 h-5 flow-arrow flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
                     </svg>
-                    <a href="#" class="process-card card-operative text-white rounded-xl px-5 py-4 text-center shadow-lg">
-                        <div class="font-semibold text-base">Planificación</div>
-                        <div class="text-sm opacity-90">Enseñanza-Aprendizaje</div>
+                    <a href="#" class="process-card card-operative text-white rounded-lg px-4 py-3 text-center shadow-lg flex-shrink-0">
+                        <div class="font-semibold">Planificación</div>
+                        <div class="text-xs opacity-90">Enseñanza-Aprendizaje</div>
                     </a>
-                    <svg class="w-6 h-6 flow-arrow flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg class="w-5 h-5 flow-arrow flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
                     </svg>
-                    <a href="#" class="process-card card-operative text-white rounded-xl px-5 py-4 text-center shadow-lg">
-                        <div class="font-semibold text-base">Enseñanza</div>
-                        <div class="text-sm opacity-90">Aprendizaje</div>
+                    <a href="#" class="process-card card-operative text-white rounded-lg px-4 py-3 text-center shadow-lg flex-shrink-0">
+                        <div class="font-semibold">Enseñanza</div>
+                        <div class="text-xs opacity-90">Aprendizaje</div>
                     </a>
-                    <svg class="w-6 h-6 flow-arrow flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg class="w-5 h-5 flow-arrow flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
                     </svg>
-                    <a href="#" class="process-card card-operative text-white rounded-xl px-5 py-4 text-center shadow-lg">
-                        <div class="font-semibold text-base">Evaluación</div>
+                    <a href="#" class="process-card card-operative text-white rounded-lg px-4 py-3 text-center shadow-lg flex-shrink-0">
+                        <div class="font-semibold">Evaluación</div>
                     </a>
-                    <svg class="w-6 h-6 flow-arrow flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg class="w-5 h-5 flow-arrow flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
                     </svg>
-                    <a href="#" class="process-card card-operative text-white rounded-xl px-5 py-4 text-center shadow-lg">
-                        <span class="font-semibold text-base">Graduación</span>
+                    <a href="#" class="process-card card-operative text-white rounded-lg px-4 py-3 text-center shadow-lg flex-shrink-0">
+                        <span class="font-semibold">Graduación</span>
                     </a>
-                    <svg class="w-6 h-6 flow-arrow flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg class="w-5 h-5 flow-arrow flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
                     </svg>
-                    <a href="#" class="process-card card-operative text-white rounded-xl px-5 py-4 text-center shadow-lg">
-                        <div class="font-semibold text-base">Seguimiento</div>
-                        <div class="text-sm opacity-90">al Egresado</div>
+                    <a href="#" class="process-card card-operative text-white rounded-lg px-4 py-3 text-center shadow-lg flex-shrink-0">
+                        <div class="font-semibold">Seguimiento</div>
+                        <div class="text-xs opacity-90">al Egresado</div>
                     </a>
                 </div>
 
