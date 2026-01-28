@@ -73,7 +73,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $id = Sdba::table('miembros')->insert_id();
         if ($id) {
             setFlashMessage('success', 'Miembro creado exitosamente');
-            redirect('ver.php?id=' . $id);
+            redirect(SITE_URL . '/modules/miembros/ver.php?id=' . $id);
         } else {
             $error = 'Error al guardar el miembro';
         }

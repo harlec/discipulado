@@ -128,7 +128,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $clase_id) {
     }
 
     setFlashMessage('success', 'Asistencia guardada correctamente');
-    redirect("index.php?curso_id=$curso_id&clase_id=$clase_id");
+    redirect(SITE_URL . '/modules/asistencia/index.php?curso_id=' . $curso_id . '&clase_id=' . $clase_id);
 }
 
 include TEMPLATES_PATH . '/header.php';

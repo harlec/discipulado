@@ -38,7 +38,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $id = Sdba::table('inscripciones')->insert_id();
             if ($id) {
                 setFlashMessage('success', 'Inscripción registrada exitosamente');
-                redirect('index.php');
+                redirect(SITE_URL . '/modules/inscripciones/index.php');
             } else {
                 $error = 'Error al registrar la inscripción';
             }

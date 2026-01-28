@@ -119,7 +119,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $curso_id) {
     }
 
     setFlashMessage('success', 'Calificaciones guardadas correctamente');
-    redirect("index.php?curso_id=$curso_id");
+    redirect(SITE_URL . '/modules/calificaciones/index.php?curso_id=' . $curso_id);
 }
 
 include TEMPLATES_PATH . '/header.php';

@@ -13,7 +13,7 @@ $miembro = Sdba::table('miembros')->where('id', $id)->get_one();
 
 if (!$miembro) {
     setFlashMessage('error', 'Miembro no encontrado');
-    redirect('index.php');
+    redirect(SITE_URL . '/modules/miembros/index.php');
 }
 
 $pageTitle = 'Editar Miembro';
@@ -97,7 +97,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         setFlashMessage('success', 'Miembro actualizado exitosamente');
-        redirect('ver.php?id=' . $id);
+        redirect(SITE_URL . '/modules/miembros/ver.php?id=' . $id);
     }
 }
 
