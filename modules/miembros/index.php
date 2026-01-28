@@ -2,6 +2,9 @@
 /**
  * Lista de Miembros
  */
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
 require_once __DIR__ . '/../../inc/config.php';
 requireRole([1, 2, 3]);
 
@@ -13,33 +16,24 @@ $buscar = $_GET['buscar'] ?? '';
 $rol = $_GET['rol'] ?? '';
 $estado = $_GET['estado'] ?? '1';
 
-// Query base
+// Query base - simplificada
 $query = Sdba::table('miembros')
-    ->left_join('rol_id', 'roles', 'id')
-    ->left_join('lider_id', 'miembros', 'id', 'miembros', 'lider')
-    ->fields('id,apellidos,nombres,celular,email,grupo_familiar,activo,fecha_registro', false, 'miembros')
-    ->fields('nombre', false, 'roles')
-    ->alias('nombre', 'rol_nombre', 'roles');
+    ->fields('id,apellidos,nombres,celular,email,grupo_familiar,activo,fecha_registro,rol_id');
 
 // Aplicar filtros
 if ($buscar) {
-    $query->open_sub();
-    $query->like('apellidos', $buscar, ['%', '%'], 'miembros');
-    $query->or_like('nombres', $buscar, ['%', '%'], 'miembros');
-    $query->or_like('celular', $buscar, ['%', '%'], 'miembros');
-    $query->or_like('email', $buscar, ['%', '%'], 'miembros');
-    $query->close_sub();
+    $query->like('apellidos', $buscar);
 }
 
 if ($rol) {
-    $query->where('rol_id', $rol, 'miembros');
+    $query->where('rol_id', $rol);
 }
 
 if ($estado !== '') {
-    $query->where('activo', $estado, 'miembros');
+    $query->where('activo', $estado);
 }
 
-$query->order_by('apellidos', 'asc', 'miembros');
+$query->order_by('apellidos', 'asc');
 
 // Paginación
 $pagina = max(1, intval($_GET['pagina'] ?? 1));
@@ -140,10 +134,10 @@ include TEMPLATES_PATH . '/sidebar.php';
                             <td class="px-6 py-4">
                                 <span class="px-2 py-1 text-xs font-medium rounded-full
                                     <?php
-                                    switch($m['rol_nombre']) {
-                                        case 'admin': echo 'bg-red-100 text-red-800'; break;
-                                        case 'maestro': echo 'bg-blue-100 text-blue-800'; break;
-                                        case 'lider': echo 'bg-green-100 text-green-800'; break;
+                                    switch($m['rol_id']) {
+                                        case 1: echo 'bg-red-100 text-red-800'; break;
+                                        case 2: echo 'bg-blue-100 text-blue-800'; break;
+                                        case 3: echo 'bg-green-100 text-green-800'; break;
                                         default: echo 'bg-gray-100 text-gray-800';
                                     }
                                     ?>">
