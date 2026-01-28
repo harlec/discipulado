@@ -99,14 +99,14 @@ include TEMPLATES_PATH . '/sidebar.php';
                 </form>
 
                 <?php if (hasRole([1])): ?>
-                <a href="crear.php" class="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition">
+                <a href="<?= SITE_URL ?>/modules/inscripciones/crear.php" class="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition">
                     <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
                     </svg>
                     Nueva Inscripción
                 </a>
                 <?php elseif (hasRole([4])): ?>
-                <a href="inscribirse.php" class="inline-flex items-center px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition">
+                <a href="<?= SITE_URL ?>/modules/inscripciones/inscribirse.php" class="inline-flex items-center px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition">
                     <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
                     </svg>
@@ -173,7 +173,7 @@ include TEMPLATES_PATH . '/sidebar.php';
                             </td>
                             <td class="px-6 py-4 text-right">
                                 <?php if (hasRole([1])): ?>
-                                <a href="editar.php?id=<?= $i['id'] ?>" class="text-sm text-blue-600 hover:text-blue-800">
+                                <a href="<?= SITE_URL ?>/modules/inscripciones/editar.php?id=<?= $i['id'] ?>" class="text-sm text-blue-600 hover:text-blue-800">
                                     Editar
                                 </a>
                                 <?php endif; ?>

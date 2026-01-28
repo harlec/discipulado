@@ -12,7 +12,7 @@ $id = intval($_GET['id'] ?? 0);
 
 // Si es alumno, solo puede ver su propio perfil
 if (hasRole([4]) && $id != $_SESSION['user_id']) {
-    redirect('ver.php?id=' . $_SESSION['user_id']);
+    redirect(SITE_URL . '/modules/miembros/ver.php?id=' . $_SESSION['user_id']);
 }
 
 // Obtener miembro simple sin JOIN
@@ -22,7 +22,7 @@ $miembro = Sdba::table('miembros')
 
 if (!$miembro) {
     setFlashMessage('error', 'Miembro no encontrado');
-    redirect('index.php');
+    redirect(SITE_URL . '/modules/miembros/index.php');
 }
 
 $pageTitle = $miembro['apellidos'] . ', ' . $miembro['nombres'];
@@ -107,7 +107,7 @@ include TEMPLATES_PATH . '/sidebar.php';
                     </div>
                     <?php if (hasRole([1])): ?>
                     <div class="flex space-x-2">
-                        <a href="editar.php?id=<?= $id ?>" class="px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg transition text-sm">
+                        <a href="<?= SITE_URL ?>/modules/miembros/editar.php?id=<?= $id ?>" class="px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg transition text-sm">
                             Editar
                         </a>
                     </div>
@@ -167,7 +167,7 @@ include TEMPLATES_PATH . '/sidebar.php';
                             <dt class="text-gray-500">Líder</dt>
                             <dd class="text-gray-900">
                                 <?php if ($lider): ?>
-                                <a href="ver.php?id=<?= $lider['id'] ?>" class="text-blue-600 hover:underline">
+                                <a href="<?= SITE_URL ?>/modules/miembros/ver.php?id=<?= $lider['id'] ?>" class="text-blue-600 hover:underline">
                                     <?= e($lider['apellidos'] . ', ' . $lider['nombres']) ?>
                                 </a>
                                 <?php else: ?>
@@ -238,7 +238,7 @@ include TEMPLATES_PATH . '/sidebar.php';
 
             <!-- Back Button -->
             <div class="mt-6">
-                <a href="index.php" class="inline-flex items-center text-gray-600 hover:text-gray-800">
+                <a href="<?= SITE_URL ?>/modules/miembros/index.php" class="inline-flex items-center text-gray-600 hover:text-gray-800">
                     <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
                     </svg>

@@ -15,7 +15,7 @@ $curso = Sdba::table('cursos')->where('id', $curso_id)->get_one();
 
 if (!$curso) {
     setFlashMessage('error', 'Curso no encontrado');
-    redirect('index.php');
+    redirect(SITE_URL . '/modules/cursos/index.php');
 }
 
 // Obtener nivel
@@ -46,7 +46,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['generar'])) {
     }
 
     setFlashMessage('success', "Se generaron $semanas clases");
-    redirect("clases.php?curso_id=$curso_id");
+    redirect(SITE_URL . '/modules/cursos/clases.php?curso_id=' . $curso_id);
 }
 
 // Guardar cambios en clases
@@ -59,7 +59,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['guardar'])) {
         ]);
     }
     setFlashMessage('success', 'Clases actualizadas');
-    redirect("clases.php?curso_id=$curso_id");
+    redirect(SITE_URL . '/modules/cursos/clases.php?curso_id=' . $curso_id);
 }
 
 // Obtener clases existentes
@@ -155,7 +155,7 @@ include TEMPLATES_PATH . '/sidebar.php';
             <?php endif; ?>
 
             <div class="mt-6">
-                <a href="ver.php?id=<?= $curso_id ?>" class="inline-flex items-center text-gray-600 hover:text-gray-800">
+                <a href="<?= SITE_URL ?>/modules/cursos/ver.php?id=<?= $curso_id ?>" class="inline-flex items-center text-gray-600 hover:text-gray-800">
                     <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
                     </svg>

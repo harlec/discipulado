@@ -2,6 +2,9 @@
 /**
  * Editar Miembro
  */
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
 require_once __DIR__ . '/../../inc/config.php';
 requireRole([1]);
 
@@ -19,25 +22,44 @@ $pageSubtitle = $miembro['apellidos'] . ', ' . $miembro['nombres'];
 $error = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // Campos que siempre tienen valor
     $datos = [
         'apellidos' => limpiarString($_POST['apellidos'] ?? ''),
         'nombres' => limpiarString($_POST['nombres'] ?? ''),
-        'fecha_nacimiento' => $_POST['fecha_nacimiento'] ?: null,
         'celular' => limpiarString($_POST['celular'] ?? ''),
         'email' => limpiarString($_POST['email'] ?? ''),
-        'fecha_conversion' => $_POST['fecha_conversion'] ?: null,
-        'bautismo_agua' => $_POST['bautismo_agua'] ?: null,
-        'bautismo_espiritu_santo' => $_POST['bautismo_espiritu_santo'] ?: null,
         'dones_habilidades' => limpiarString($_POST['dones_habilidades'] ?? ''),
         'cargo_iglesia' => limpiarString($_POST['cargo_iglesia'] ?? ''),
-        'grupo_familiar' => $_POST['grupo_familiar'] ?: null,
-        'lider_id' => $_POST['lider_id'] ?: null,
-        'grado_instruccion' => $_POST['grado_instruccion'] ?: null,
         'ocupacion' => limpiarString($_POST['ocupacion'] ?? ''),
-        'estado_civil' => $_POST['estado_civil'] ?: null,
-        'rol_id' => $_POST['rol_id'] ?? 4,
+        'rol_id' => intval($_POST['rol_id'] ?? 4),
         'activo' => isset($_POST['activo']) ? 1 : 0,
     ];
+
+    // Campos opcionales - solo agregar si tienen valor
+    if (!empty($_POST['fecha_nacimiento'])) {
+        $datos['fecha_nacimiento'] = $_POST['fecha_nacimiento'];
+    }
+    if (!empty($_POST['fecha_conversion'])) {
+        $datos['fecha_conversion'] = $_POST['fecha_conversion'];
+    }
+    if (!empty($_POST['bautismo_agua'])) {
+        $datos['bautismo_agua'] = $_POST['bautismo_agua'];
+    }
+    if (!empty($_POST['bautismo_espiritu_santo'])) {
+        $datos['bautismo_espiritu_santo'] = intval($_POST['bautismo_espiritu_santo']);
+    }
+    if (!empty($_POST['grupo_familiar'])) {
+        $datos['grupo_familiar'] = intval($_POST['grupo_familiar']);
+    }
+    if (!empty($_POST['lider_id'])) {
+        $datos['lider_id'] = intval($_POST['lider_id']);
+    }
+    if (!empty($_POST['grado_instruccion'])) {
+        $datos['grado_instruccion'] = $_POST['grado_instruccion'];
+    }
+    if (!empty($_POST['estado_civil'])) {
+        $datos['estado_civil'] = $_POST['estado_civil'];
+    }
 
     // Password opcional
     if (!empty($_POST['password'])) {
@@ -55,7 +77,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     if (!$error) {
+        // Actualizar datos normales
         Sdba::table('miembros')->where('id', $id)->update($datos);
+
+        // Actualizar campos que deben ser NULL con query directa
+        $nullFields = [];
+        if (empty($_POST['fecha_nacimiento'])) $nullFields[] = "fecha_nacimiento = NULL";
+        if (empty($_POST['fecha_conversion'])) $nullFields[] = "fecha_conversion = NULL";
+        if (empty($_POST['bautismo_agua'])) $nullFields[] = "bautismo_agua = NULL";
+        if (empty($_POST['bautismo_espiritu_santo'])) $nullFields[] = "bautismo_espiritu_santo = NULL";
+        if (empty($_POST['grupo_familiar'])) $nullFields[] = "grupo_familiar = NULL";
+        if (empty($_POST['lider_id'])) $nullFields[] = "lider_id = NULL";
+        if (empty($_POST['grado_instruccion'])) $nullFields[] = "grado_instruccion = NULL";
+        if (empty($_POST['estado_civil'])) $nullFields[] = "estado_civil = NULL";
+
+        if (!empty($nullFields)) {
+            $nullSql = "UPDATE miembros SET " . implode(", ", $nullFields) . " WHERE id = " . intval($id);
+            Sdba::query($nullSql);
+        }
+
         setFlashMessage('success', 'Miembro actualizado exitosamente');
         redirect('ver.php?id=' . $id);
     }
@@ -223,7 +263,7 @@ include TEMPLATES_PATH . '/sidebar.php';
 
                     <!-- Buttons -->
                     <div class="flex justify-end space-x-3 pt-4 border-t">
-                        <a href="ver.php?id=<?= $id ?>" class="px-6 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition">
+                        <a href="<?= SITE_URL ?>/modules/miembros/ver.php?id=<?= $id ?>" class="px-6 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition">
                             Cancelar
                         </a>
                         <button type="submit" class="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition">

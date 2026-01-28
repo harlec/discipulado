@@ -50,7 +50,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $id = Sdba::table('cursos')->insert_id();
         if ($id) {
             setFlashMessage('success', 'Curso creado exitosamente');
-            redirect('ver.php?id=' . $id);
+            redirect(SITE_URL . '/modules/cursos/ver.php?id=' . $id);
         } else {
             $error = 'Error al guardar el curso';
         }

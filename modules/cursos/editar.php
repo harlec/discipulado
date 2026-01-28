@@ -15,7 +15,7 @@ $curso = Sdba::table('cursos')->where('id', $id)->get_one();
 
 if (!$curso) {
     setFlashMessage('error', 'Curso no encontrado');
-    redirect('index.php');
+    redirect(SITE_URL . '/modules/cursos/index.php');
 }
 
 // Obtener nivel para el título
@@ -76,7 +76,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         if ($result !== false) {
             setFlashMessage('success', 'Curso actualizado exitosamente');
-            redirect('ver.php?id=' . $id);
+            redirect(SITE_URL . '/modules/cursos/ver.php?id=' . $id);
         } else {
             $error = 'Error al actualizar el curso';
         }
@@ -213,7 +213,7 @@ include TEMPLATES_PATH . '/sidebar.php';
                     </div>
 
                     <div class="flex justify-end space-x-3 pt-4 border-t">
-                        <a href="ver.php?id=<?= $id ?>" class="px-6 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition">
+                        <a href="<?= SITE_URL ?>/modules/cursos/ver.php?id=<?= $id ?>" class="px-6 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition">
                             Cancelar
                         </a>
                         <button type="submit" class="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition">

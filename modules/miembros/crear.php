@@ -2,6 +2,9 @@
 /**
  * Crear Miembro
  */
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
 require_once __DIR__ . '/../../inc/config.php';
 requireRole([1]);
 
@@ -11,25 +14,44 @@ $pageSubtitle = 'Registrar un nuevo miembro';
 $error = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // Campos obligatorios y que siempre tienen valor
     $datos = [
         'apellidos' => limpiarString($_POST['apellidos'] ?? ''),
         'nombres' => limpiarString($_POST['nombres'] ?? ''),
-        'fecha_nacimiento' => $_POST['fecha_nacimiento'] ?: null,
         'celular' => limpiarString($_POST['celular'] ?? ''),
         'email' => limpiarString($_POST['email'] ?? ''),
-        'fecha_conversion' => $_POST['fecha_conversion'] ?: null,
-        'bautismo_agua' => $_POST['bautismo_agua'] ?: null,
-        'bautismo_espiritu_santo' => $_POST['bautismo_espiritu_santo'] ?: null,
         'dones_habilidades' => limpiarString($_POST['dones_habilidades'] ?? ''),
         'cargo_iglesia' => limpiarString($_POST['cargo_iglesia'] ?? ''),
-        'grupo_familiar' => $_POST['grupo_familiar'] ?: null,
-        'lider_id' => $_POST['lider_id'] ?: null,
-        'grado_instruccion' => $_POST['grado_instruccion'] ?: null,
         'ocupacion' => limpiarString($_POST['ocupacion'] ?? ''),
-        'estado_civil' => $_POST['estado_civil'] ?: null,
-        'rol_id' => $_POST['rol_id'] ?? 4,
+        'rol_id' => intval($_POST['rol_id'] ?? 4),
         'activo' => isset($_POST['activo']) ? 1 : 0,
     ];
+
+    // Campos opcionales - solo agregar si tienen valor
+    if (!empty($_POST['fecha_nacimiento'])) {
+        $datos['fecha_nacimiento'] = $_POST['fecha_nacimiento'];
+    }
+    if (!empty($_POST['fecha_conversion'])) {
+        $datos['fecha_conversion'] = $_POST['fecha_conversion'];
+    }
+    if (!empty($_POST['bautismo_agua'])) {
+        $datos['bautismo_agua'] = $_POST['bautismo_agua'];
+    }
+    if (!empty($_POST['bautismo_espiritu_santo'])) {
+        $datos['bautismo_espiritu_santo'] = intval($_POST['bautismo_espiritu_santo']);
+    }
+    if (!empty($_POST['grupo_familiar'])) {
+        $datos['grupo_familiar'] = intval($_POST['grupo_familiar']);
+    }
+    if (!empty($_POST['lider_id'])) {
+        $datos['lider_id'] = intval($_POST['lider_id']);
+    }
+    if (!empty($_POST['grado_instruccion'])) {
+        $datos['grado_instruccion'] = $_POST['grado_instruccion'];
+    }
+    if (!empty($_POST['estado_civil'])) {
+        $datos['estado_civil'] = $_POST['estado_civil'];
+    }
 
     // Password opcional
     if (!empty($_POST['password'])) {
