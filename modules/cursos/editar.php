@@ -71,7 +71,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         if (!empty($nullFields)) {
             $nullSql = "UPDATE cursos SET " . implode(", ", $nullFields) . " WHERE id = " . intval($id);
-            Sdba::query($nullSql);
+            Sdba::table('cursos')->query($nullSql);
         }
 
         if ($result !== false) {

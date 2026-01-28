@@ -93,7 +93,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         if (!empty($nullFields)) {
             $nullSql = "UPDATE miembros SET " . implode(", ", $nullFields) . " WHERE id = " . intval($id);
-            Sdba::query($nullSql);
+            Sdba::table('miembros')->query($nullSql);
         }
 
         setFlashMessage('success', 'Miembro actualizado exitosamente');
